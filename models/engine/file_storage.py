@@ -54,6 +54,10 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
+    def close(self):
+        """ Reload JSON objects """
+        return self.reload()
+
     def delete(self, obj=None):
         """
         Deletes obj from __objects (if it's inside)

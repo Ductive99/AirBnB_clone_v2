@@ -2,7 +2,6 @@
 """ This Module defines a class to manage database storage """
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
-from os import getenv
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
@@ -10,6 +9,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+from os import getenv
 
 
 class DBStorage:
@@ -17,10 +17,10 @@ class DBStorage:
     __engine = None
     __session = None
     __classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+                'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                'State': State, 'City': City, 'Amenity': Amenity,
+                'Review': Review
+                }
 
     def __init__(self):
         """ Class that creates the engine for MySQL """
@@ -47,7 +47,7 @@ class DBStorage:
 
         if cls:
             for row in self.__session.query(cls).all():
-                key = cls.__class__.__name__ + '.' + row.id
+                key = row.__class__.__name__ + '.' + row.id
                 result_dict[key] = row
         else:
             for k, v in self.__classes:
@@ -66,8 +66,8 @@ class DBStorage:
 
     def delete(self, obj=None):
         """ Deletes the obj from the current DB session """
-        if obj:
-            self.__session.delete(obj)
+        if obj is not None:
+            self.__session.delete(obj, synchronize_session=False)
 
     def reload(self):
         """
@@ -76,7 +76,8 @@ class DBStorage:
         """
         Base.metadata.create_all(self.__engine)
         session = sessionmaker(self.__engine, expire_on_commit=False)
-        self.__session = scoped_session(session)
+        Session = scoped_session(session)
+        self.__session = Session()
 
     def close(self):
         """ Closes the storage engine """

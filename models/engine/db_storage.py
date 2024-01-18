@@ -50,7 +50,7 @@ class DBStorage:
                 key = row.__class__.__name__ + '.' + row.id
                 result_dict[key] = row
         else:
-            for k, v in self.__classes:
+            for k, v in self.__classes.items():
                 for row in self.__session.query(v):
                     key = row.__class__.__name__ + '.' + row.id
                     result_dict[key] = row
@@ -58,7 +58,7 @@ class DBStorage:
 
     def new(self, obj):
         """ Adds the object to the current DB session """
-        self.__session.add(obj)
+        self.__session.merge(obj)
 
     def save(self):
         """ Commit all changes of the current DB session """

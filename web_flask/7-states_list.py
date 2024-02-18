@@ -17,7 +17,7 @@ app.url_map.strict_slahes = False
 def states():
     states = list(storage.all(State).values())
     states.sort(key=lambda x: x.name)
-    ls = { 'states': states }
+    ls = {'states': states}
     return render_template("7-states_list.html", **ls)
 
 
